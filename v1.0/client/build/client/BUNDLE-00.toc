@@ -1,0 +1,3 @@
+([('client',
+   '/Users/santanu_mac/Documents/GitHub/Distributed_image_processing/v1.0/client/dist/client',
+   'EXECUTABLE')],)
