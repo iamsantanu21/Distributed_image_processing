@@ -9,6 +9,8 @@ pip3 install opencv-python
         pip install pyinstaller
     Build server EXE:
         pyinstaller --onefile --noconsole server.py
+    The executable will be in dist/server.exe
 # On Mac (for client):
-    Build client app:
-        pyinstaller --onefile --windowed client.py
+#Build client app:
+    pyinstaller --onefile --windowed client.py
+The .app bundle will appear in dist/client.app
