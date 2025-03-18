@@ -6,10 +6,10 @@
 # Packaging the executables
 ## On Windows (for server):
 ### Install PyInstaller:
-        pip install pyinstaller
+    pip install pyinstaller
 ### Build server EXE:
-        pyinstaller --onefile --noconsole server.py
-    The executable will be in dist/server.exe
+    pyinstaller --onefile --noconsole server.py
+### The executable will be in dist/server.exe
 ## On Mac (for client):
 ### Build client app:
     pyinstaller --onefile --windowed client.py
