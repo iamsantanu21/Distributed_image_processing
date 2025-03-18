@@ -4,9 +4,8 @@ import socket
 import time
 import os
 import pickle
-import matplotlib.pyplot as plt
 
-def process_image(image_part, port):
+def process_image(image_part):
     # Convert the image part to grayscale
     gray_image = cv2.cvtColor(image_part, cv2.COLOR_BGR2GRAY)
 
@@ -25,12 +24,6 @@ def process_image(image_part, port):
     # Resize the image
     resized_image = cv2.resize(gray_image, (128, 128))
 
-    # Rotate the image by 45 degrees
-    (h, w) = gray_image.shape[:2]
-    center = (w // 2, h // 2)
-    rotation_matrix = cv2.getRotationMatrix2D(center, 45, 1.0)
-    rotated_image = cv2.warpAffine(gray_image, rotation_matrix, (w, h))
-
     # Adjust contrast
     contrast_adjusted_image = cv2.convertScaleAbs(gray_image, alpha=1.5, beta=0)
 
@@ -40,16 +33,6 @@ def process_image(image_part, port):
     # Apply sharpening filter
     kernel = np.array([[-1, -1, -1], [-1, 9, -1], [-1, -1, -1]])
     sharpened_image = cv2.filter2D(gray_image, -1, kernel)
-
-    # Compute histogram
-    hist = cv2.calcHist([gray_image], [0], None, [256], [0, 256])
-    plt.plot(hist)
-    plt.title("Grayscale Histogram")
-    plt.xlabel("Pixel Intensity")
-    plt.ylabel("Frequency")
-    hist_image_path = os.path.join("server_output", f"histogram_part_{port}.png")
-    plt.savefig(hist_image_path)
-    plt.close()
 
     # Convert to HSV color space
     hsv_image = cv2.cvtColor(image_part, cv2.COLOR_BGR2HSV)
@@ -82,11 +65,9 @@ def process_image(image_part, port):
         "thresholded": thresholded_image,
         "equalized": equalized_image,
         "resized": resized_image,
-        "rotated": rotated_image,
         "contrast_adjusted": contrast_adjusted_image,
         "brightness_adjusted": brightness_adjusted_image,
         "sharpened": sharpened_image,
-        "histogram": hist_image_path,
         "hsv": hsv_image,
         "lab": lab_image,
         "eroded": eroded_image,
@@ -122,7 +103,7 @@ def start_server(host, port, output_dir):
 
                 # Receive the size of the image data first
                 size_data = conn.recv(8)
-                size = int.from_bytes(size_data, byteorder='big')
+                size = int.from_bytes(size_data, byteorder='big')  # Fixed line
                 print(f"Expecting {size} bytes of image data")
 
                 # Receive the image data
@@ -157,13 +138,11 @@ def start_server(host, port, output_dir):
 
                 # Process the image part
                 start_time = time.time()
-                processed_images = process_image(image_part, port)  # Pass the port to process_image
+                processed_images = process_image(image_part)
                 processing_time = time.time() - start_time
 
                 # Save the processed images
                 for key, processed_image in processed_images.items():
-                    if key == "histogram":
-                        continue  # Histogram is already saved as an image
                     processed_image_path = os.path.join(output_dir, f"{key}_part_{port}.png")
                     cv2.imwrite(processed_image_path, processed_image)
                     print(f"Saved {key} image part to {processed_image_path}")

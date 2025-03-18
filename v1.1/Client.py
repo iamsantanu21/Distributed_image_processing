@@ -31,7 +31,7 @@ def receive_image_data(conn):
     size_data = conn.recv(8)
     if not size_data:
         raise EOFError("Connection closed by server")
-    size = int.from_bytes(size_data, byteorder='big')
+    size = int.from_bytes(size_data, byteorder='big')  # Fixed line
     # Receive the actual data
     data = b''
     while len(data) < size:
@@ -75,7 +75,6 @@ if __name__ == "__main__":
 
     # Load the TIFF image using Pillow
     tiff_image = Image.open('sea.tiff')
-    
     tiff_image = tiff_image.convert('RGB')  # Convert to RGB if necessary
     image = np.array(tiff_image)  # Convert to NumPy array for processing
 
@@ -105,7 +104,6 @@ if __name__ == "__main__":
         "thresholded": [None] * len(parts),
         "equalized": [None] * len(parts),
         "resized": [None] * len(parts),
-        "rotated": [None] * len(parts),
         "contrast_adjusted": [None] * len(parts),
         "brightness_adjusted": [None] * len(parts),
         "sharpened": [None] * len(parts),

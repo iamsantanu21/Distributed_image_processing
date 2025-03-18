@@ -1,0 +1,17 @@
+# Create a virtual environment (optional but recommended)
+python3 -m venv myenv
+
+# Activate the virtual environment
+source myenv/bin/activate  # On macOS/Linux
+# .\myenv\Scripts\activate  # On Windows
+
+# Install required libraries
+pip install opencv-python numpy matplotlib pillow
+
+# If you also need additional OpenCV features (e.g., GUI support, video codecs), install the full package:
+    pip install opencv-python-headless
+
+# Run the server
+python3 server1.py
+
+
