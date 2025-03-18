@@ -29,13 +29,15 @@ def concatenate_image(parts):
 def receive_image_data(conn):
     # Receive the size of the data first
     size_data = conn.recv(8)
+    if not size_data:
+        raise EOFError("Connection closed by server")
     size = int.from_bytes(size_data, byteorder='big')
     # Receive the actual data
     data = b''
     while len(data) < size:
         packet = conn.recv(min(4096, size - len(data)))
         if not packet:
-            break
+            raise EOFError("Connection closed by server")
         data += packet
     # Deserialize the data
     return pickle.loads(data)
@@ -72,7 +74,8 @@ if __name__ == "__main__":
     os.makedirs(OUTPUT_DIR, exist_ok=True)
 
     # Load the TIFF image using Pillow
-    tiff_image = Image.open('santanu.tiff')
+    tiff_image = Image.open('sea.tiff')
+    
     tiff_image = tiff_image.convert('RGB')  # Convert to RGB if necessary
     image = np.array(tiff_image)  # Convert to NumPy array for processing
 
@@ -100,7 +103,21 @@ if __name__ == "__main__":
         "blurred": [None] * len(parts),
         "edges": [None] * len(parts),
         "thresholded": [None] * len(parts),
-        "equalized": [None] * len(parts)
+        "equalized": [None] * len(parts),
+        "resized": [None] * len(parts),
+        "rotated": [None] * len(parts),
+        "contrast_adjusted": [None] * len(parts),
+        "brightness_adjusted": [None] * len(parts),
+        "sharpened": [None] * len(parts),
+        "hsv": [None] * len(parts),
+        "lab": [None] * len(parts),
+        "eroded": [None] * len(parts),
+        "dilated": [None] * len(parts),
+        "opened": [None] * len(parts),
+        "closed": [None] * len(parts),
+        "median_blurred": [None] * len(parts),
+        "bilateral_filtered": [None] * len(parts),
+        "corners": [None] * len(parts)
     }
 
     start_time = time.time()
